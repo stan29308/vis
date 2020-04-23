@@ -7391,8 +7391,8 @@ var Hexagon = __webpack_require__(209)['default'];
 var Pentagon = __webpack_require__(210)['default'];
 var Parallelogram = __webpack_require__(211)['default'];
 var SquaredCircle = __webpack_require__(212)['default'];
-var SquaredTriangleDown = __webpack_require__(213)['default'];
-var SquaredTriangleUp = __webpack_require__(214)['default'];
+var SquaredTriangle = __webpack_require__(213)['default'];
+var SquaredTriangleDown = __webpack_require__(214)['default'];
 var Star = __webpack_require__(215)['default'];
 var Text = __webpack_require__(216)['default'];
 var Triangle = __webpack_require__(217)['default'];
@@ -7745,8 +7745,8 @@ var Node = function () {
           case 'squaredTriangleDown':
             this.shape = new SquaredTriangleDown(this.options, this.body, this.labelModule);
             break;
-          case 'squaredTriangleUp':
-            this.shape = new SquaredTriangleUp(this.options, this.body, this.labelModule);
+          case 'squaredTriangle':
+            this.shape = new SquaredTriangle(this.options, this.body, this.labelModule);
             break;
           case 'star':
             this.shape = new Star(this.options, this.body, this.labelModule);
@@ -43574,7 +43574,7 @@ if (typeof CanvasRenderingContext2D !== 'undefined') {
    * @param {number} h vertical height
    * 
    */
-  CanvasRenderingContext2D.prototype.squaredTriangleUp = function (x, y, w, h) {
+  CanvasRenderingContext2D.prototype.squaredTriangle = function (x, y, w, h) {
     this.beginPath();
 
     // Triangle up
@@ -47483,22 +47483,22 @@ var _ShapeBase3 = _interopRequireDefault(_ShapeBase2);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 /**
- * A triangle pointing down in a square Node/Cluster shape.
+ * A triangle pointing up in a square Node/Cluster shape.
  *
  * @extends ShapeBase
  */
-var SquaredTriangleDown = function (_ShapeBase) {
-  (0, _inherits3['default'])(SquaredTriangleDown, _ShapeBase);
+var SquaredTriangle = function (_ShapeBase) {
+  (0, _inherits3['default'])(SquaredTriangle, _ShapeBase);
 
   /**
    * @param {Object} options
    * @param {Object} body
    * @param {Label} labelModule
    */
-  function SquaredTriangleDown(options, body, labelModule) {
-    (0, _classCallCheck3['default'])(this, SquaredTriangleDown);
+  function SquaredTriangle(options, body, labelModule) {
+    (0, _classCallCheck3['default'])(this, SquaredTriangle);
 
-    var _this = (0, _possibleConstructorReturn3['default'])(this, (SquaredTriangleDown.__proto__ || (0, _getPrototypeOf2['default'])(SquaredTriangleDown)).call(this, options, body, labelModule));
+    var _this = (0, _possibleConstructorReturn3['default'])(this, (SquaredTriangle.__proto__ || (0, _getPrototypeOf2['default'])(SquaredTriangle)).call(this, options, body, labelModule));
 
     _this._setMargins(labelModule);
     return _this;
@@ -47507,15 +47507,37 @@ var SquaredTriangleDown = function (_ShapeBase) {
   /**
    *
    * @param {CanvasRenderingContext2D} ctx
-   * @param {number} x width
-   * @param {number} y height
-   * @param {boolean} selected
-   * @param {boolean} hover
-   * @param {{toArrow: boolean, toArrowScale: (allOptions.edges.arrows.to.scaleFactor|{number}|allOptions.edges.arrows.middle.scaleFactor|allOptions.edges.arrows.from.scaleFactor|Array|number), toArrowType: *, middleArrow: boolean, middleArrowScale: (number|allOptions.edges.arrows.middle.scaleFactor|{number}|Array), middleArrowType: (allOptions.edges.arrows.middle.type|{string}|string|*), fromArrow: boolean, fromArrowScale: (allOptions.edges.arrows.to.scaleFactor|{number}|allOptions.edges.arrows.middle.scaleFactor|allOptions.edges.arrows.from.scaleFactor|Array|number), fromArrowType: *, arrowStrikethrough: (*|boolean|allOptions.edges.arrowStrikethrough|{boolean}), color: undefined, inheritsColor: (string|string|string|allOptions.edges.color.inherit|{string, boolean}|Array|*), opacity: *, hidden: *, length: *, shadow: *, shadowColor: *, shadowSize: *, shadowX: *, shadowY: *, dashes: (*|boolean|Array|allOptions.edges.dashes|{boolean, array}), width: *}} values
+   * @param {boolean} [selected]
+   * @param {boolean} [hover]
    */
 
 
-  (0, _createClass3['default'])(SquaredTriangleDown, [{
+  (0, _createClass3['default'])(SquaredTriangle, [{
+    key: 'resize',
+    value: function resize(ctx) {
+      var selected = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.selected;
+      var hover = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.hover;
+
+      if (this.needsRefresh(selected, hover)) {
+        var dimensions = this.getDimensionsFromLabel(ctx, selected, hover);
+
+        this.width = dimensions.width + this.margin.right + this.margin.left;
+        this.height = dimensions.height + this.margin.top + this.margin.bottom;
+        this.radius = this.width / 2;
+      }
+    }
+
+    /**
+     *
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {number} x width
+     * @param {number} y height
+     * @param {boolean} selected
+     * @param {boolean} hover
+     * @param {{toArrow: boolean, toArrowScale: (allOptions.edges.arrows.to.scaleFactor|{number}|allOptions.edges.arrows.middle.scaleFactor|allOptions.edges.arrows.from.scaleFactor|Array|number), toArrowType: *, middleArrow: boolean, middleArrowScale: (number|allOptions.edges.arrows.middle.scaleFactor|{number}|Array), middleArrowType: (allOptions.edges.arrows.middle.type|{string}|string|*), fromArrow: boolean, fromArrowScale: (allOptions.edges.arrows.to.scaleFactor|{number}|allOptions.edges.arrows.middle.scaleFactor|allOptions.edges.arrows.from.scaleFactor|Array|number), fromArrowType: *, arrowStrikethrough: (*|boolean|allOptions.edges.arrowStrikethrough|{boolean}), color: undefined, inheritsColor: (string|string|string|allOptions.edges.color.inherit|{string, boolean}|Array|*), opacity: *, hidden: *, length: *, shadow: *, shadowColor: *, shadowSize: *, shadowX: *, shadowY: *, dashes: (*|boolean|Array|allOptions.edges.dashes|{boolean, array}), width: *}} values
+     */
+
+  }, {
     key: 'draw',
     value: function draw(ctx, x, y, selected, hover, values) {
       this.resize(ctx, selected, hover);
@@ -47523,7 +47545,7 @@ var SquaredTriangleDown = function (_ShapeBase) {
       this.top = y - this.height / 2;
 
       this.initContextForDraw(ctx, values);
-      ctx.squaredTriangleDown(x, y, this.width, this.height);
+      ctx.squaredTriangle(x, y, this.width, this.height);
       this.performFill(ctx, values);
 
       this.updateBoundingBox(x, y, ctx, selected, hover);
@@ -47540,13 +47562,16 @@ var SquaredTriangleDown = function (_ShapeBase) {
   }, {
     key: 'distanceToBorder',
     value: function distanceToBorder(ctx, angle) {
-      return this._distanceToBorder(ctx, angle);
+      this.resize(ctx);
+      var borderWidth = this.options.borderWidth;
+
+      return Math.min(Math.abs(this.width / 2 / Math.cos(angle)), Math.abs(this.height / 2 / Math.sin(angle))) + borderWidth;
     }
   }]);
-  return SquaredTriangleDown;
+  return SquaredTriangle;
 }(_ShapeBase3['default']);
 
-exports['default'] = SquaredTriangleDown;
+exports['default'] = SquaredTriangle;
 
 /***/ }),
 /* 214 */
@@ -47586,22 +47611,22 @@ var _ShapeBase3 = _interopRequireDefault(_ShapeBase2);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 /**
- * A triangle pointing up in a square Node/Cluster shape.
+ * A triangle pointing down in a square Node/Cluster shape.
  *
  * @extends ShapeBase
  */
-var SquaredTriangleUp = function (_ShapeBase) {
-  (0, _inherits3['default'])(SquaredTriangleUp, _ShapeBase);
+var SquaredTriangleDown = function (_ShapeBase) {
+  (0, _inherits3['default'])(SquaredTriangleDown, _ShapeBase);
 
   /**
    * @param {Object} options
    * @param {Object} body
    * @param {Label} labelModule
    */
-  function SquaredTriangleUp(options, body, labelModule) {
-    (0, _classCallCheck3['default'])(this, SquaredTriangleUp);
+  function SquaredTriangleDown(options, body, labelModule) {
+    (0, _classCallCheck3['default'])(this, SquaredTriangleDown);
 
-    var _this = (0, _possibleConstructorReturn3['default'])(this, (SquaredTriangleUp.__proto__ || (0, _getPrototypeOf2['default'])(SquaredTriangleUp)).call(this, options, body, labelModule));
+    var _this = (0, _possibleConstructorReturn3['default'])(this, (SquaredTriangleDown.__proto__ || (0, _getPrototypeOf2['default'])(SquaredTriangleDown)).call(this, options, body, labelModule));
 
     _this._setMargins(labelModule);
     return _this;
@@ -47610,15 +47635,37 @@ var SquaredTriangleUp = function (_ShapeBase) {
   /**
    *
    * @param {CanvasRenderingContext2D} ctx
-   * @param {number} x width
-   * @param {number} y height
-   * @param {boolean} selected
-   * @param {boolean} hover
-   * @param {{toArrow: boolean, toArrowScale: (allOptions.edges.arrows.to.scaleFactor|{number}|allOptions.edges.arrows.middle.scaleFactor|allOptions.edges.arrows.from.scaleFactor|Array|number), toArrowType: *, middleArrow: boolean, middleArrowScale: (number|allOptions.edges.arrows.middle.scaleFactor|{number}|Array), middleArrowType: (allOptions.edges.arrows.middle.type|{string}|string|*), fromArrow: boolean, fromArrowScale: (allOptions.edges.arrows.to.scaleFactor|{number}|allOptions.edges.arrows.middle.scaleFactor|allOptions.edges.arrows.from.scaleFactor|Array|number), fromArrowType: *, arrowStrikethrough: (*|boolean|allOptions.edges.arrowStrikethrough|{boolean}), color: undefined, inheritsColor: (string|string|string|allOptions.edges.color.inherit|{string, boolean}|Array|*), opacity: *, hidden: *, length: *, shadow: *, shadowColor: *, shadowSize: *, shadowX: *, shadowY: *, dashes: (*|boolean|Array|allOptions.edges.dashes|{boolean, array}), width: *}} values
+   * @param {boolean} [selected]
+   * @param {boolean} [hover]
    */
 
 
-  (0, _createClass3['default'])(SquaredTriangleUp, [{
+  (0, _createClass3['default'])(SquaredTriangleDown, [{
+    key: 'resize',
+    value: function resize(ctx) {
+      var selected = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.selected;
+      var hover = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.hover;
+
+      if (this.needsRefresh(selected, hover)) {
+        var dimensions = this.getDimensionsFromLabel(ctx, selected, hover);
+
+        this.width = dimensions.width + this.margin.right + this.margin.left;
+        this.height = dimensions.height + this.margin.top + this.margin.bottom;
+        this.radius = this.width / 2;
+      }
+    }
+
+    /**
+     *
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {number} x width
+     * @param {number} y height
+     * @param {boolean} selected
+     * @param {boolean} hover
+     * @param {{toArrow: boolean, toArrowScale: (allOptions.edges.arrows.to.scaleFactor|{number}|allOptions.edges.arrows.middle.scaleFactor|allOptions.edges.arrows.from.scaleFactor|Array|number), toArrowType: *, middleArrow: boolean, middleArrowScale: (number|allOptions.edges.arrows.middle.scaleFactor|{number}|Array), middleArrowType: (allOptions.edges.arrows.middle.type|{string}|string|*), fromArrow: boolean, fromArrowScale: (allOptions.edges.arrows.to.scaleFactor|{number}|allOptions.edges.arrows.middle.scaleFactor|allOptions.edges.arrows.from.scaleFactor|Array|number), fromArrowType: *, arrowStrikethrough: (*|boolean|allOptions.edges.arrowStrikethrough|{boolean}), color: undefined, inheritsColor: (string|string|string|allOptions.edges.color.inherit|{string, boolean}|Array|*), opacity: *, hidden: *, length: *, shadow: *, shadowColor: *, shadowSize: *, shadowX: *, shadowY: *, dashes: (*|boolean|Array|allOptions.edges.dashes|{boolean, array}), width: *}} values
+     */
+
+  }, {
     key: 'draw',
     value: function draw(ctx, x, y, selected, hover, values) {
       this.resize(ctx, selected, hover);
@@ -47626,7 +47673,7 @@ var SquaredTriangleUp = function (_ShapeBase) {
       this.top = y - this.height / 2;
 
       this.initContextForDraw(ctx, values);
-      ctx.squaredTriangleUp(x, y, this.width, this.height);
+      ctx.squaredTriangleDown(x, y, this.width, this.height);
       this.performFill(ctx, values);
 
       this.updateBoundingBox(x, y, ctx, selected, hover);
@@ -47643,13 +47690,16 @@ var SquaredTriangleUp = function (_ShapeBase) {
   }, {
     key: 'distanceToBorder',
     value: function distanceToBorder(ctx, angle) {
-      return this._distanceToBorder(ctx, angle);
+      this.resize(ctx);
+      var borderWidth = this.options.borderWidth;
+
+      return Math.min(Math.abs(this.width / 2 / Math.cos(angle)), Math.abs(this.height / 2 / Math.sin(angle))) + borderWidth;
     }
   }]);
-  return SquaredTriangleUp;
+  return SquaredTriangleDown;
 }(_ShapeBase3['default']);
 
-exports['default'] = SquaredTriangleUp;
+exports['default'] = SquaredTriangleDown;
 
 /***/ }),
 /* 215 */
