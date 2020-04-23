@@ -28694,7 +28694,7 @@ var allOptions = {
       y: { number: number },
       __type__: { object: object, boolean: bool }
     },
-    shape: { string: ['ellipse', 'circle', 'database', 'box', 'text', 'image', 'circularImage', 'diamond', 'dot', 'star', 'triangle', 'triangleDown', 'square', 'icon', 'hexagon', 'pentagon', 'parallelogram', 'squaredCircle', 'squaredTriangleDown', 'squaredTriangleUp'] },
+    shape: { string: ['ellipse', 'circle', 'database', 'box', 'text', 'image', 'circularImage', 'diamond', 'dot', 'star', 'triangle', 'triangleDown', 'square', 'icon', 'hexagon', 'pentagon', 'parallelogram', 'squaredCircle', 'squaredTriangleDown', 'squaredTriangle'] },
     shapeProperties: {
       borderDashes: { boolean: bool, array: array },
       borderRadius: { number: number },
@@ -28840,7 +28840,7 @@ var configureOptions = {
       x: [5, -30, 30, 1],
       y: [5, -30, 30, 1]
     },
-    shape: ['ellipse', 'box', 'circle', 'database', 'diamond', 'dot', 'square', 'star', 'text', 'triangle', 'triangleDown', 'hexagon', 'pentagon', 'parallelogram', 'squaredCircle', 'squaredTriangleDown', 'squaredTriangleUp'],
+    shape: ['ellipse', 'box', 'circle', 'database', 'diamond', 'dot', 'square', 'star', 'text', 'triangle', 'triangleDown', 'hexagon', 'pentagon', 'parallelogram', 'squaredCircle', 'squaredTriangleDown', 'squaredTriangle'],
     shapeProperties: {
       borderDashes: false,
       borderRadius: [6, 0, 20, 1],
@@ -43506,8 +43506,8 @@ if (typeof CanvasRenderingContext2D !== 'undefined') {
 
   /**
    * Draw a circle in a square shape
-   * @param {number} x horizontal center
-   * @param {number} y vertical center
+   * @param {number} x horizontal value of top left
+   * @param {number} y vertical value of top left
    * @param {number} w horizontal width
    * @param {number} h vertical height
    */
@@ -43543,6 +43543,32 @@ if (typeof CanvasRenderingContext2D !== 'undefined') {
   };
 
   /**
+   * Draw a triangle shape in upward orientation inside a square
+   * @param {number} x horizontal center
+   * @param {number} y vertical center
+   * @param {number} w horizontal width
+   * @param {number} h vertical height
+   * 
+   */
+  CanvasRenderingContext2D.prototype.squaredTriangle = function (x, y, w, h) {
+    this.beginPath();
+
+    // Triangle down
+    this.moveTo(x, y + h);
+    this.lineTo(x + 0.5 * w, y);
+    this.lineTo(x + w, y + h);
+    this.lineTo(x, y + h);
+
+    // Square
+    this.lineTo(x, y);
+    this.lineTo(x + w, y);
+    this.lineTo(x + w, y + h);
+    this.lineTo(x, y + h);
+
+    this.closePath();
+  };
+
+  /**
    * Draw a triangle shape in downward orientation inside a square
    * @param {number} x horizontal center
    * @param {number} y vertical center
@@ -43554,39 +43580,17 @@ if (typeof CanvasRenderingContext2D !== 'undefined') {
     this.beginPath();
 
     // Triangle down
-    this.moveTo(x - w, y + h);
-    this.lineTo(x, y - h);
-    this.lineTo(x + w, y + h);
+    this.moveTo(x, y);
+    this.lineTo(x + w, y);
+    this.lineTo(x + 0.5 * w, y + h);
+    this.lineTo(x, y);
 
     // Square
-    this.lineTo(x - w, y + h);
-    this.lineTo(x - w, y - h);
-    this.lineTo(x + w, y - h);
+    this.lineTo(x, y);
+    this.lineTo(x + w, y);
     this.lineTo(x + w, y + h);
-    this.closePath();
-  };
-
-  /**
-   * Draw a triangle shape in upward orientation inside a square
-   * @param {number} x horizontal center
-   * @param {number} y vertical center
-   * @param {number} w horizontal width
-   * @param {number} h vertical height
-   * 
-   */
-  CanvasRenderingContext2D.prototype.squaredTriangle = function (x, y, w, h) {
-    this.beginPath();
-
-    // Triangle up
-    this.moveTo(x - w, y - h);
     this.lineTo(x, y + h);
-    this.lineTo(x + w, y - h);
 
-    // Square
-    this.lineTo(x - w, y - h);
-    this.lineTo(x - w, y + h);
-    this.lineTo(x + w, y + h);
-    this.lineTo(x + w, y - h);
     this.closePath();
   };
 }
@@ -47521,9 +47525,9 @@ var SquaredTriangle = function (_ShapeBase) {
       if (this.needsRefresh(selected, hover)) {
         var dimensions = this.getDimensionsFromLabel(ctx, selected, hover);
 
-        this.width = dimensions.width + this.margin.right + this.margin.left;
-        this.height = dimensions.height + this.margin.top + this.margin.bottom;
-        this.radius = this.width / 2;
+        this.height = dimensions.height * 2;
+        this.width = dimensions.width + dimensions.height;
+        this.radius = 0.5 * this.width;
       }
     }
 
@@ -47545,7 +47549,7 @@ var SquaredTriangle = function (_ShapeBase) {
       this.top = y - this.height / 2;
 
       this.initContextForDraw(ctx, values);
-      ctx.squaredTriangle(x, y, this.width, this.height);
+      ctx.squaredTriangle(this.left, this.top, this.width, this.height);
       this.performFill(ctx, values);
 
       this.updateBoundingBox(x, y, ctx, selected, hover);
@@ -47562,10 +47566,7 @@ var SquaredTriangle = function (_ShapeBase) {
   }, {
     key: 'distanceToBorder',
     value: function distanceToBorder(ctx, angle) {
-      this.resize(ctx);
-      var borderWidth = this.options.borderWidth;
-
-      return Math.min(Math.abs(this.width / 2 / Math.cos(angle)), Math.abs(this.height / 2 / Math.sin(angle))) + borderWidth;
+      return this._distanceToBorder(ctx, angle);
     }
   }]);
   return SquaredTriangle;
@@ -47649,9 +47650,9 @@ var SquaredTriangleDown = function (_ShapeBase) {
       if (this.needsRefresh(selected, hover)) {
         var dimensions = this.getDimensionsFromLabel(ctx, selected, hover);
 
-        this.width = dimensions.width + this.margin.right + this.margin.left;
-        this.height = dimensions.height + this.margin.top + this.margin.bottom;
-        this.radius = this.width / 2;
+        this.height = dimensions.height * 2;
+        this.width = dimensions.width + dimensions.height;
+        this.radius = 0.5 * this.width;
       }
     }
 
@@ -47673,7 +47674,7 @@ var SquaredTriangleDown = function (_ShapeBase) {
       this.top = y - this.height / 2;
 
       this.initContextForDraw(ctx, values);
-      ctx.squaredTriangleDown(x, y, this.width, this.height);
+      ctx.squaredTriangleDown(this.left, this.top, this.width, this.height);
       this.performFill(ctx, values);
 
       this.updateBoundingBox(x, y, ctx, selected, hover);
@@ -47690,10 +47691,7 @@ var SquaredTriangleDown = function (_ShapeBase) {
   }, {
     key: 'distanceToBorder',
     value: function distanceToBorder(ctx, angle) {
-      this.resize(ctx);
-      var borderWidth = this.options.borderWidth;
-
-      return Math.min(Math.abs(this.width / 2 / Math.cos(angle)), Math.abs(this.height / 2 / Math.sin(angle))) + borderWidth;
+      return this._distanceToBorder(ctx, angle);
     }
   }]);
   return SquaredTriangleDown;
