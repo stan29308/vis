@@ -33,6 +33,7 @@
     "watch": "gulp watch",
     "watch-dev": "gulp watch --bundle"
   },
+  "prepare": "npm run build",
   "dependencies": {
     "emitter-component": "^1.1.1",
     "moment": "^2.18.1",
